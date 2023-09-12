@@ -1,0 +1,4 @@
+FROM mysql:5.7.15
+ENV key=value
+ADD ./src/init.sql /docker-entrypoint-initdb.d
+COPY ./src/ /var/www/html/
