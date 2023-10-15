@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    build: ./database
+    environment:
+      - MYSQL_DATABASE=table1
+      - MYSQL_ROOT_PASSWORD=777
+    volumes:
+      - db_data_4:/var/lib/mysql
+
+  web_server_apache:
+    image: polinux/httpd-php
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./src/dynamic:/var/www/html
+
+  nginx:
+    build: ./nginx
+    restart: always
+    user: root
+    depends_on:
+      - web_server_apache
+    ports:
+      - 80:80
+    volumes:
+      - ./src/static:/site_files
+
+volumes:
+  db_data_4:
