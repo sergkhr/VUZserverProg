@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 
 
 @Entity
+//@Table(name = "book")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book
@@ -44,4 +45,9 @@ public class Book
     @Getter
     @Setter
     private String title;
+
+    @Column(nullable = false)
+    @Getter
+    @Setter
+    private int inStock; // -1 - нет в наличии, >0 - количество в наличии
 }

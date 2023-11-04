@@ -57,6 +57,9 @@ public class BookController {
 			if (updatedBook.getTitle() != null) {
 				existingBook.setTitle(updatedBook.getTitle());
 			}
+			if (updatedBook.getInStock() != 0){
+				existingBook.setInStock(updatedBook.getInStock());
+			}
 
 			return bookRepository.save(existingBook);
 		}

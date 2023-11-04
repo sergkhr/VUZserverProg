@@ -9,6 +9,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 
 @Entity
+//@Table(name = "telephone")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Telephone
