@@ -35,7 +35,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// Bd
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.postgresql:postgresql'
 	implementation 'javax.persistence:javax.persistence-api:2.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

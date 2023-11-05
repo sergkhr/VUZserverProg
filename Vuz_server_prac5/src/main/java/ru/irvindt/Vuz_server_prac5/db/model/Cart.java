@@ -8,12 +8,13 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 @Entity
-//@Table(name = "cart")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cart {
@@ -23,14 +24,8 @@ public class Cart {
 	@Setter
 	private Long id;
 
-	//many to many with CartItem
-	@ManyToMany
-	@JoinTable(
-			name = "cart_cartitem",
-			joinColumns = @JoinColumn(name = "cart_id"),
-			inverseJoinColumns = @JoinColumn(name = "cartitem_id")
-	)
+	@OneToMany(mappedBy = "cart")
 	@Getter
 	@Setter
-	private Set<CartItem> cartItems = new HashSet<>();
+	private List<CartItemRelation> cartItemRelations = new ArrayList<>();
 }

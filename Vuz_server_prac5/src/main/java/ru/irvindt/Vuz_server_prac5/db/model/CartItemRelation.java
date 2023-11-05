@@ -9,16 +9,10 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItem {
+public class CartItemRelation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Getter
@@ -26,18 +20,18 @@ public class CartItem {
 	private Long id;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "cartItem")
+	@ManyToOne
 	@Getter
 	@Setter
-	private List<CartItemRelation> cartItemRelations = new ArrayList<>();
+	private Cart cart;
 
 	@ManyToOne
 	@Getter
 	@Setter
-	private GoodsType goodsType;
+	private CartItem cartItem;
 
 	@Column(nullable = false)
 	@Getter
 	@Setter
-	private Long productId;
+	private int quantity;
 }

@@ -5,25 +5,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
-import ru.irvindt.Vuz_server_prac5.db.model.Book;
-import ru.irvindt.Vuz_server_prac5.db.model.Cart;
-import ru.irvindt.Vuz_server_prac5.db.model.CartItem;
-import ru.irvindt.Vuz_server_prac5.db.model.GoodsType;
-import ru.irvindt.Vuz_server_prac5.db.repository.BookRepository;
-import ru.irvindt.Vuz_server_prac5.db.repository.CartRepository;
-import ru.irvindt.Vuz_server_prac5.db.repository.GoodsTypeRepository;
+import ru.irvindt.Vuz_server_prac5.db.model.*;
+import ru.irvindt.Vuz_server_prac5.db.repository.*;
 
 @Component
 public class Init {
 	private final BookRepository bookRepository;
 	private final GoodsTypeRepository goodsTypeRepository;
 	private final CartRepository cartRepository;
+	private final CartItemRepository cartItemRepository;
+	private final CartItemRelationRepository cartItemRelationRepository;
 
 	@Autowired
-	public Init(BookRepository bookRepository, GoodsTypeRepository goodsTypeRepository, CartRepository cartRepository) {
+	public Init(BookRepository bookRepository, GoodsTypeRepository goodsTypeRepository,
+	            CartRepository cartRepository, CartItemRepository cartItemRepository,
+	            CartItemRelationRepository cartItemRelationRepository) {
 		this.bookRepository = bookRepository;
 		this.goodsTypeRepository = goodsTypeRepository;
 		this.cartRepository = cartRepository;
+		this.cartItemRepository = cartItemRepository;
+		this.cartItemRelationRepository = cartItemRelationRepository;
+
 	}
 
 	@PostConstruct
@@ -61,20 +63,32 @@ public class Init {
 		}
 
 
-		//initialize a test cart and put there a book of id 1 if such a book exists
-		if(cartRepository.count() == 0 && bookRepository.findById(1L).isPresent()
-				&& goodsTypeRepository.findByName("Book") != null){
+		if (cartRepository.count() == 0 && bookRepository.findById(1L).isPresent()) {
+			//yes a duplicate, but I'm too tired
+			GoodsType bookType = goodsTypeRepository.findByName("Book");
+			if (bookType == null) {
+				bookType = new GoodsType();
+				bookType.setName("Book");
+				goodsTypeRepository.save(bookType);
+			}
+
 			Cart initCart = new Cart();
 			CartItem book1CartItem = new CartItem();
+			CartItemRelation book1CartItemRelation = new CartItemRelation();
 
-			GoodsType bookType = goodsTypeRepository.findByName("Book");
 			book1CartItem.setGoodsType(bookType);
 			book1CartItem.setProductId(1L);
-			book1CartItem.setQuantity(2);
 
-			initCart.getCartItems().add(book1CartItem);
+			book1CartItemRelation.setCart(initCart);
+			book1CartItemRelation.setCartItem(book1CartItem);
+			book1CartItemRelation.setQuantity(1);
 
+			book1CartItem.getCartItemRelations().add(book1CartItemRelation);
+			initCart.getCartItemRelations().add(book1CartItemRelation);
+
+			cartItemRepository.save(book1CartItem);
 			cartRepository.save(initCart);
+			cartItemRelationRepository.save(book1CartItemRelation);
 		}
 
 	}
