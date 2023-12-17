@@ -1,0 +1,50 @@
+services:
+  cookieService:
+    image: alpine
+    volumes:
+      - ./build/go_build_cookieService_linux:/app
+    command:
+      - "/app"
+
+
+  gateway:
+    image: alpine
+    volumes:
+      - ./build/go_build_gateway_linux:/app
+    command:
+      - "/app"
+    depends_on:
+      - filesService
+      - cookieService
+
+  filesDB:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data/db
+      - ./mongo.yml:/etc/mongo/mongo.yml
+    entrypoint: [ "mongod", "--config", "/etc/mongo/mongo.yml", "--bind_ip", "localhost, filesDB" ]
+
+  filesService:
+    image: alpine
+    environment:
+      DATABASE_URL: filesDB
+    volumes:
+      - ./build:/app
+    command:
+      - "/app/go_build_fileService_linux"
+    depends_on:
+      - filesDB
+
+  site:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - gateway
+
+volumes:
+  data:

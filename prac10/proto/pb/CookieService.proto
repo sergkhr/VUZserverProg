@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "/pb";
+
+service CookieService {
+  rpc CookieCreate(StringDataMessage) returns (StringDataMessage) {
+    option (google.api.http) = {
+      post: "/api/cookie"
+      body: "*"
+    };
+  }
+  rpc ParallelCookieGet(google.protobuf.Empty) returns (StringDataMessage) {
+    option (google.api.http) = {
+      get: "/api/cookie/parallel"
+    };
+  }
+  rpc LinearCookieGet(google.protobuf.Empty) returns (StringDataMessage) {
+    option (google.api.http) = {
+      get: "/api/cookie/linear"
+    };
+  }
+}
+
+message StringDataMessage {
+  string data = 1;
+}

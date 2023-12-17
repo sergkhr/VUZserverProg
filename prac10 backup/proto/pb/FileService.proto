@@ -1,0 +1,65 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "/pb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+message StringMessage {
+  string value = 1;
+}
+
+service FileService {
+  rpc FilesInfoGetHandler(google.protobuf.Empty) returns (AllFileInfoResponse) {
+    option (google.api.http) = {
+      get: "/files"
+    };
+  }
+  rpc FileInfoGetHandler(FileRequest) returns (FileInfo) {
+    option (google.api.http) = {
+      get: "/files/{fileId}/info"
+    };
+  }
+  rpc DeleteFileHandler(FileRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/files/{fileId}"
+    };
+  }
+  rpc UploadFile (stream FileTransferMessage) returns (FileUploadResult) {}
+  rpc DownloadFile (FileRequest) returns (stream FileTransferMessage) {}
+  rpc UpdateFile (stream FileUpdateMessage) returns (FileUploadResult) {}
+}
+
+message FileRequest {
+  string fileId = 1;
+}
+
+message FileTransferMessage {
+  string filename = 1;
+  bytes file_data = 2;
+}
+
+message FileUpdateMessage {
+  string filename = 1;
+  bytes file_data = 2;
+  string fileId = 3;
+}
+
+message FileUploadResult {
+  string message = 1;
+}
+
+message FileInfo {
+  string id = 1;
+  string name = 2;
+  int64 size = 3;
+}
+
+message AllFileInfoResponse {
+  repeated FileInfo files = 1;
+}
+
+//    ID   primitive.ObjectID `json:"id" bson:"_id"`
+//      Name string             `json:"name" bson:"name"`
+//      Size int64              `json:"size" bson:"size"`
