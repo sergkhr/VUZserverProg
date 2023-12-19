@@ -1,0 +1,52 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - 'POSTGRES_USER=user'
+      - 'POSTGRES_DB=stats_db'
+      - 'POSTGRES_PASSWORD=password'
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
+  
+  statistics:
+    build: .
+    depends_on:
+      - db
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - filesData:/data/db
+      - ./files/mongo.yml:/etc/mongo/mongo.yml
+    entrypoint: ["mongod", "--config", "/etc/mongo/mongo.yml", "--bind_ip", "localhost, mongo"]
+
+  site:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./files/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+
+  app:
+    env_file:
+      - ./files/.env
+    image: alpine
+    volumes:
+      - ./files:/app
+    command:
+      - "/app/go_build_Pr9_cmd_app_linux_linux"
+    depends_on:
+      - db
+
+
+volumes:
+  data:
+  filesData:
